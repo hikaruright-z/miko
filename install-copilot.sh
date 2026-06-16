@@ -3,11 +3,15 @@ set -euo pipefail
 
 REPO="studyplus/miko"
 BRANCH="main"
-SKILLS_DIR=".github/skills"
 
-if [ ! -d ".github" ]; then
-  echo "⛩️  .github ディレクトリが見つかりません。プロジェクトのルートで実行くださいませ。"
-  echo "    (.github directory not found. Please run this from your project root.)"
+# インストール先: .github があれば .github/skills、.copilot があれば .copilot/skills
+if [ -d ".github" ]; then
+  SKILLS_DIR=".github/skills"
+elif [ -d ".copilot" ]; then
+  SKILLS_DIR=".copilot/skills"
+else
+  echo "⛩️  .github または .copilot ディレクトリが見つかりません。プロジェクトのルートで実行くださいませ。"
+  echo "    (Neither .github nor .copilot directory was found. Please run this from your project root.)"
   exit 1
 fi
 
@@ -29,9 +33,9 @@ case "$LANG_CHOICE" in
 esac
 
 if [ "$LANG_CHOICE" = "en" ]; then
-  echo "⛩️  Installing miko skills for GitHub Copilot..."
+  echo "⛩️  Installing miko skills for GitHub Copilot into: $SKILLS_DIR/"
 else
-  echo "⛩️  GitHub Copilot 向けに miko スキルをインストールいたします..."
+  echo "⛩️  GitHub Copilot 向けに miko スキルをインストールいたします: $SKILLS_DIR/"
 fi
 
 tmpdir=$(mktemp -d)

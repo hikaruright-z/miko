@@ -3,7 +3,12 @@ set -euo pipefail
 
 REPO="studyplus/miko"
 BRANCH="main"
-SKILLS_DIR=".github/skills"
+# インストール先: .github/skills を優先、なければ .copilot/skills
+if [ -d ".github/skills" ] || { [ -d ".github" ] && [ ! -d ".copilot/skills" ]; }; then
+  SKILLS_DIR=".github/skills"
+else
+  SKILLS_DIR=".copilot/skills"
+fi
 VERSION_FILE=".miko/VERSION"
 OLD_VERSION_FILE="$SKILLS_DIR/_miko/VERSION"
 
@@ -19,9 +24,9 @@ say() {
   if [ "$LANG_CHOICE" = "en" ]; then echo "$2"; else echo "$1"; fi
 }
 
-if [ ! -d ".github" ]; then
-  say "⛩️  .github ディレクトリが見つかりません。プロジェクトのルートで実行くださいませ。" \
-      "⛩️  .github directory not found. Please run this from your project root."
+if [ ! -d ".github" ] && [ ! -d ".copilot" ]; then
+  say "⛩️  .github または .copilot ディレクトリが見つかりません。プロジェクトのルートで実行くださいませ。" \
+      "⛩️  Neither .github nor .copilot directory was found. Please run this from your project root."
   exit 1
 fi
 
